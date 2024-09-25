@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Request Management</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <style>
+    .hidden { display: none; }
+    .button { margin: 5px; }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div v-if="currentView === 'list'">
+    <h1>Requests</h1>
+    <button @click="openForm()">Create Request</button>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Selected Files</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(request, index) in requests" :key="index">
+          <td><a href="#" @click.prevent="viewCard(request)">{{ request.title }}</a></td>
+          <td>{{ request.files.join(', ') }}</td>
+          <td>
+            <button @click="editRequest(request)">Edit</button>
+            <button @click="deleteRequest(index)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div v-else-if="currentView === 'form'">
+    <h1>{{ formMode === 'create' ? 'Create' : 'Edit' }} Request</h1>
+    <form @submit.prevent="saveRequest">
+      <label for="title">Title:</label>
+      <input type="text" v-model="form.title" required><br>
+      <label for="prompt">Prompt:</label>
+      <textarea v-model="form.prompt" required></textarea><br>
+      <label>Files:</label><br>
+      <div v-for="file in availableFiles" :key="file">
+        <input type="checkbox" :value="file" v-model="form.files"> {{ file }}<br>
+      </div>
+      <button type="submit">Save</button>
+      <button @click="cancelForm">Cancel</button>
+    </form>
+  </div>
+
+  <div v-else-if="currentView === 'card'">
+    <h1>{{ currentRequest.title }}</h1>
+    <p>{{ currentRequest.prompt }}</p>
+    <p>Selected Files: {{ currentRequest.files.join(', ') }}</p>
+    <button @click="editRequest(currentRequest)">Edit</button>
+    <button @click="deleteRequest(requests.indexOf(currentRequest))">Delete</button>
+    <button @click="proceedRequest">Proceed</button>
+    <div v-if="result">
+      <h2>Result:</h2>
+      <p>{{ result }}</p>
+    </div>
+    <button @click="cancelView">Back to List</button>
+  </div>
+</div>
+
+<script>
+new Vue({
+  el: '#app',
+  data: {
+    currentView: 'list',
+    formMode: 'create',
+    requests: [],
+    form: {
+      title: '',
+      prompt: '',
+      files: []
+    },
+    currentRequest: null,
+    availableFiles: ['File1.txt', 'File2.txt', 'File3.txt'],
+    result: ''
+  },
+  methods: {
+    openForm() {
+      this.formMode = 'create';
+      this.form = { title: '', prompt: '', files: [] };
+      this.currentView = 'form';
+    },
+    saveRequest() {
+      if (this.formMode === 'create') {
+        this.requests.push({ ...this.form });
+      } else {
+        Object.assign(this.currentRequest, this.form);
+      }
+      this.currentView = 'list';
+    },
+    editRequest(request) {
+      this.formMode = 'edit';
+      this.form = { ...request };
+      this.currentRequest = request;
+      this.currentView = 'form';
+    },
+    deleteRequest(index) {
+      if (confirm('Are you sure you want to delete this request?')) {
+        this.requests.splice(index, 1);
+        if (this.currentView === 'card') {
+          this.currentView = 'list';
+        }
+      }
+    },
+    viewCard(request) {
+      this.currentRequest = request;
+      this.currentView = 'card';
+    },
+    proceedRequest() {
+      // Simulating sending data to AI and receiving a response
+      this.result = 'AI response based on the prompt and selected files.';
+    },
+    cancelForm() {
+      this.currentView = 'list';
+    },
+    cancelView() {
+      this.currentView = 'list';
+    }
+  }
+});
+</script>
+
+</body>
+</html>
+
