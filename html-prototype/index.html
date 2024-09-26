@@ -3,16 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Request Management</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    html.day-mode, body.day-mode {
+      background-color: #fff;
+      color: #000;
+    }
+    html.night-mode, body.night-mode {
+      background-color: #121212;
+      color: #fafafa;
+    }
+    .night-mode .box, .night-mode .button, .night-mode .table {
+      background-color: #1e1e1e;
+      color: #fafafa;
+    }
+    .night-mode .table th, .night-mode .table td {
+      border-color: #333;
+    }
+  </style>
 </head>
 <body>
 
-<div id="app">
+<div id="app" class="container mt-5">
+  <!-- Header -->
+  <header class="level is-mobile">
+    <div class="level-left">
+      <h1 class="title">AI Dir</h1>
+    </div>
+    <div class="level-right">
+      <button class="button" @click="toggleTheme">{{ theme === 'day-mode' ? 'Switch to Night Mode' : 'Switch to Day Mode' }}</button>
+    </div>
+  </header>
+
   <!-- List of Requests -->
   <div v-if="currentView === 'list'">
-    <h1>Requests</h1>
-    <button @click="openForm">Create Request</button>
-    <table border="1">
+    <h1 class="title">Requests</h1>
+    <button class="button is-primary mb-4" @click="openForm">Create Request</button>
+    <table class="table is-bordered is-striped is-fullwidth">
       <thead>
         <tr>
           <th>Title</th>
@@ -25,8 +57,8 @@
           <td><a href="#" @click.prevent="viewCard(request)">{{ request.title }}</a></td>
           <td>{{ request.files.join(', ') }}</td>
           <td>
-            <button @click="editRequest(request)">Edit</button>
-            <button @click="deleteRequest(index)">Delete</button>
+            <button class="button is-small is-info" @click="editRequest(request)">Edit</button>
+            <button class="button is-small is-danger" @click="deleteRequest(index)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -35,33 +67,45 @@
 
   <!-- Form for Creating/Editing Requests -->
   <div v-else-if="currentView === 'form'">
-    <h1>{{ formMode === 'create' ? 'Create' : 'Edit' }} Request</h1>
+    <h1 class="title">{{ formMode === 'create' ? 'Create' : 'Edit' }} Request</h1>
     <form @submit.prevent="saveRequest">
-      <label for="title">Title:</label>
-      <input type="text" v-model="form.title" id="title" required><br>
-      <label for="prompt">Prompt:</label>
-      <textarea v-model="form.prompt" id="prompt" required></textarea><br>
-      <label>Files:</label><br>
-      <div v-for="file in availableFiles" :key="file">
-        <input type="checkbox" :value="file" v-model="form.files" :id="file"> 
-        <label :for="file">{{ file }}</label><br>
+      <div class="field">
+        <label class="label" for="title">Title:</label>
+        <div class="control">
+          <input class="input" type="text" v-model="form.title" id="title" required>
+        </div>
       </div>
-      <button type="submit">{{ formMode === 'create' ? 'Create' : 'Save' }}</button>
-      <button type="button" @click="cancelForm">Cancel</button>
+      <div class="field">
+        <label class="label" for="prompt">Prompt:</label>
+        <div class="control">
+          <textarea class="textarea" v-model="form.prompt" id="prompt" required></textarea>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Files:</label>
+        <div class="control">
+          <div v-for="file in availableFiles" :key="file" class="mb-2">
+            <input type="checkbox" :value="file" v-model="form.files" :id="file"> 
+            <label :for="file">{{ file }}</label>
+          </div>
+        </div>
+      </div>
+      <button class="button is-primary" type="submit">{{ formMode === 'create' ? 'Create' : 'Save' }}</button>
+      <button class="button is-light" type="button" @click="cancelForm">Cancel</button>
     </form>
   </div>
 
   <!-- Page for Showing a Request Card -->
   <div v-else-if="currentView === 'card'">
-    <button @click="cancelView">Back to List</button>
-    <h1>{{ currentRequest.title }}</h1>
+    <button class="button is-light mb-4" @click="cancelView">Back to List</button>
+    <h1 class="title">{{ currentRequest.title }}</h1>
     <p>{{ currentRequest.prompt }}</p>
     <p>Selected Files: {{ currentRequest.files.join(', ') }}</p>
-    <button @click="editRequest(currentRequest)">Edit</button>
-    <button @click="confirmDeleteRequest">Delete</button>
-    <button @click="proceedRequest">Proceed</button>
-    <div v-if="result">
-      <h2>Result:</h2>
+    <button class="button is-info" @click="editRequest(currentRequest)">Edit</button>
+    <button class="button is-danger" @click="confirmDeleteRequest">Delete</button>
+    <button class="button is-success" @click="proceedRequest">Proceed</button>
+    <div v-if="result" class="box mt-4">
+      <h2 class="subtitle">Result:</h2>
       <p>{{ result }}</p>
     </div>
   </div>
@@ -81,7 +125,8 @@ new Vue({
     },
     currentRequest: null,
     availableFiles: ['File1.txt', 'File2.txt', 'File3.txt'],
-    result: ''
+    result: '',
+    theme: 'day-mode'
   },
   methods: {
     openForm() {
@@ -133,7 +178,21 @@ new Vue({
     },
     cancelView() {
       this.currentView = 'list';
+    },
+    toggleTheme() {
+      this.theme = this.theme === 'day-mode' ? 'night-mode' : 'day-mode';
+      document.documentElement.className = this.theme;
+      document.body.className = this.theme;
+    },
+    determineInitialTheme() {
+      const hour = new Date().getHours();
+      return hour >= 6 && hour < 18 ? 'day-mode' : 'night-mode';
     }
+  },
+  mounted() {
+    this.theme = this.determineInitialTheme();
+    document.documentElement.className = this.theme;
+    document.body.className = this.theme;
   }
 });
 </script>
