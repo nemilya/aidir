@@ -4,7 +4,7 @@ AI chat with directory
 
 Work in progress
 
-- [ ] UI prototype html
+- [x] UI prototype html
 - [ ] API
 - [ ] backend API
 
