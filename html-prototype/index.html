@@ -4,10 +4,6 @@
   <meta charset="UTF-8">
   <title>Request Management</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-  <style>
-    .hidden { display: none; }
-    .button { margin: 5px; }
-  </style>
 </head>
 <body>
 
@@ -15,7 +11,7 @@
   <!-- List of Requests -->
   <div v-if="currentView === 'list'">
     <h1>Requests</h1>
-    <button @click="openForm()">Create Request</button>
+    <button @click="openForm">Create Request</button>
     <table border="1">
       <thead>
         <tr>
@@ -42,20 +38,22 @@
     <h1>{{ formMode === 'create' ? 'Create' : 'Edit' }} Request</h1>
     <form @submit.prevent="saveRequest">
       <label for="title">Title:</label>
-      <input type="text" v-model="form.title" required><br>
+      <input type="text" v-model="form.title" id="title" required><br>
       <label for="prompt">Prompt:</label>
-      <textarea v-model="form.prompt" required></textarea><br>
+      <textarea v-model="form.prompt" id="prompt" required></textarea><br>
       <label>Files:</label><br>
       <div v-for="file in availableFiles" :key="file">
-        <input type="checkbox" :value="file" v-model="form.files"> {{ file }}<br>
+        <input type="checkbox" :value="file" v-model="form.files" :id="file"> 
+        <label :for="file">{{ file }}</label><br>
       </div>
       <button type="submit">{{ formMode === 'create' ? 'Create' : 'Save' }}</button>
-      <button @click="cancelForm">Cancel</button>
+      <button type="button" @click="cancelForm">Cancel</button>
     </form>
   </div>
 
   <!-- Page for Showing a Request Card -->
   <div v-else-if="currentView === 'card'">
+    <button @click="cancelView">Back to List</button>
     <h1>{{ currentRequest.title }}</h1>
     <p>{{ currentRequest.prompt }}</p>
     <p>Selected Files: {{ currentRequest.files.join(', ') }}</p>
@@ -66,7 +64,6 @@
       <h2>Result:</h2>
       <p>{{ result }}</p>
     </div>
-    <button @click="cancelView">Back to List</button>
   </div>
 </div>
 
@@ -95,10 +92,11 @@ new Vue({
     saveRequest() {
       if (this.formMode === 'create') {
         this.requests.push({ ...this.form });
+        this.currentRequest = this.requests[this.requests.length - 1];
       } else {
         Object.assign(this.currentRequest, this.form);
       }
-      this.currentView = 'list';
+      this.currentView = 'card';
     },
     editRequest(request) {
       this.formMode = 'edit';
@@ -142,3 +140,4 @@ new Vue({
 
 </body>
 </html>
+
