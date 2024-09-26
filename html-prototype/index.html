@@ -12,6 +12,7 @@
 <body>
 
 <div id="app">
+  <!-- List of Requests -->
   <div v-if="currentView === 'list'">
     <h1>Requests</h1>
     <button @click="openForm()">Create Request</button>
@@ -36,6 +37,7 @@
     </table>
   </div>
 
+  <!-- Form for Creating/Editing Requests -->
   <div v-else-if="currentView === 'form'">
     <h1>{{ formMode === 'create' ? 'Create' : 'Edit' }} Request</h1>
     <form @submit.prevent="saveRequest">
@@ -47,17 +49,18 @@
       <div v-for="file in availableFiles" :key="file">
         <input type="checkbox" :value="file" v-model="form.files"> {{ file }}<br>
       </div>
-      <button type="submit">Save</button>
+      <button type="submit">{{ formMode === 'create' ? 'Create' : 'Save' }}</button>
       <button @click="cancelForm">Cancel</button>
     </form>
   </div>
 
+  <!-- Page for Showing a Request Card -->
   <div v-else-if="currentView === 'card'">
     <h1>{{ currentRequest.title }}</h1>
     <p>{{ currentRequest.prompt }}</p>
     <p>Selected Files: {{ currentRequest.files.join(', ') }}</p>
     <button @click="editRequest(currentRequest)">Edit</button>
-    <button @click="deleteRequest(requests.indexOf(currentRequest))">Delete</button>
+    <button @click="confirmDeleteRequest">Delete</button>
     <button @click="proceedRequest">Proceed</button>
     <div v-if="result">
       <h2>Result:</h2>
@@ -111,6 +114,10 @@ new Vue({
         }
       }
     },
+    confirmDeleteRequest() {
+      const index = this.requests.indexOf(this.currentRequest);
+      this.deleteRequest(index);
+    },
     viewCard(request) {
       this.currentRequest = request;
       this.currentView = 'card';
@@ -120,7 +127,11 @@ new Vue({
       this.result = 'AI response based on the prompt and selected files.';
     },
     cancelForm() {
-      this.currentView = 'list';
+      if (this.formMode === 'edit') {
+        this.currentView = 'card';
+      } else {
+        this.currentView = 'list';
+      }
     },
     cancelView() {
       this.currentView = 'list';
@@ -131,4 +142,3 @@ new Vue({
 
 </body>
 </html>
-

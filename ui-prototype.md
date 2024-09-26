@@ -16,8 +16,8 @@ UI prototype html, vuejs, one html file
 	- prompt
 	- list of files (checkbox)
 	- buttons:
-		- create/save
-		- cancel (return on list or on card)
+		- create/save (after create or save - show card page)
+		- cancel (return on list if create form or on card if edit form)
 - page show card
 	- title
 	- prompt
