@@ -5,8 +5,10 @@ AI chat with directory
 Work in progress
 
 - [x] UI prototype html
-- [ ] API
-- [ ] backend API
+- [x] API
+- [x] front-end with API
+- [x] backend prototype API
+- [ ] backend API with DB (sqlite)
 
 - [ ] request to AI and store response
 - [ ] configuration yml
@@ -14,4 +16,4 @@ Work in progress
 - [ ] search for files
 - [ ] search for requests
 - [ ] projects
-
+- [ ] Dockerfile
