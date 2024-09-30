@@ -2,21 +2,17 @@ require 'sinatra'
 require 'json'
 require 'securerandom'
 
-# Структура заявок (вместо базы данных)
 $requests = []
 
-# Отдача статического HTML файла
 get '/' do
   send_file File.join(settings.public_folder, 'index.html')
 end
 
-# Получение списка заявок
 get '/api/requests' do
   content_type :json
   $requests.to_json
 end
 
-# Создание новой заявки
 post '/api/requests' do
   content_type :json
   request_data = JSON.parse(request.body.read)
@@ -30,7 +26,6 @@ post '/api/requests' do
   new_request.to_json
 end
 
-# Редактирование существующей заявки
 put '/api/requests/:id' do
   content_type :json
   request_data = JSON.parse(request.body.read)
@@ -44,14 +39,12 @@ put '/api/requests/:id' do
   existing_request.to_json
 end
 
-# Удаление заявки
 delete '/api/requests/:id' do
   request_id = params[:id]
   $requests.reject! { |r| r[:id] == request_id }
   status 204
 end
 
-# Получение конкретной заявки
 get '/api/requests/:id' do
   content_type :json
   request_id = params[:id]
@@ -61,7 +54,6 @@ get '/api/requests/:id' do
   existing_request.to_json
 end
 
-# Обработка заявки
 post '/api/requests/:id/proceed' do
   content_type :json
   request_id = params[:id]

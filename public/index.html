@@ -119,7 +119,7 @@ new Vue({
       prompt: '',
       files: []
     },
-    currentRequest: { title: '', prompt: '', files: [], result: '' }, // Добавлено result
+    currentRequest: { title: '', prompt: '', files: [], result: '' },
     availableFiles: ['File1.txt', 'File2.txt', 'File3.txt'],
     theme: 'day-mode'
   },
@@ -127,7 +127,7 @@ new Vue({
     openForm() {
       this.formMode = 'create';
       this.form = { title: '', prompt: '', files: [] };
-      this.currentRequest = { title: '', prompt: '', files: [], result: '' }; // Добавлено result
+      this.currentRequest = { title: '', prompt: '', files: [], result: '' };
       this.currentView = 'form';
     },
     saveRequest() {
@@ -143,7 +143,7 @@ new Vue({
       .then(response => response.json())
       .then(data => {
         if (this.formMode === 'create') {
-          data.result = ''; // Добавляем result для нового запроса
+          data.result = '';
           this.requests.push(data);
           this.currentRequest = data;
         } else {
@@ -187,7 +187,6 @@ new Vue({
       })
       .then(response => response.json())
       .then(data => {
-        console.log('Data received:', data); // Добавлено для отладки
         this.currentRequest.result = data.result;
         const index = this.requests.findIndex(req => req.id === this.currentRequest.id);
         if (index !== -1) {
