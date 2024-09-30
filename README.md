@@ -2,13 +2,21 @@
 
 AI chat with directory
 
-Work in progress
+Installation and run:
+- ruby (rbenv, rvm)
+- bundle install
+- bundle exec rake db:create
+- bundle exec rake db:migrate
+- ruby app.rb
 
+(Work in progress)
+
+Todo:
 - [x] UI prototype html
 - [x] API
 - [x] front-end with API
 - [x] backend prototype API
-- [ ] backend API with DB (sqlite)
+- [x] backend API with DB (sqlite)
 
 - [ ] request to AI and store response
 - [ ] configuration yml
