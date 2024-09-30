@@ -217,6 +217,9 @@ new Vue({
     loadRequests() {
       fetch('/api/requests')
         .then(response => response.json())
+        .then(data => {
+          this.requests = data;
+        });
     }
   },
   mounted() {
